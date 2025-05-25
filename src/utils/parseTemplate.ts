@@ -1,19 +1,52 @@
+import { countBraces } from './countBraces';
 import { compileExpression } from './compileExpression';
-import { Context } from '../types';
+import type { Context } from '../types';
 
-export function parseTemplate(template: string, context: Context): string {
+export function parseTemplate(
+  template: string,
+  context: Context,
+  maxDepth = 10
+): string {
   const keys = Object.keys(context);
   const values = keys.map(k => context[k]);
 
-  return template.replace(/\{\{(.*?)\}\}/g, (_, rawExpr) => {
-    const expr = rawExpr.trim();
-    const fn = compileExpression(expr, keys);
-    if (!fn) return `{{${expr}}}`;
+  let current: string = template;
+  let loops = 0;
 
-    try {
-      return String(fn(...values));
-    } catch {
-      return `{{${expr}}}`;
-    }
-  });
+  while (countBraces(current) > 0 && loops < maxDepth) {
+    current = current.replace(/\{([^{}]+)\}/g, (_, rawExpr: string): string => {
+      const expr = rawExpr.trim();
+
+      const evaluatedExpr = expr.replace(
+        /`([^`]*)`/g,
+        (_, inner: string): string => {
+          const nestedEvaluated = inner.replace(
+            /\{([^{}]+)\}/g,
+            (_, nested: string): string => {
+              const fn = compileExpression(nested.trim(), keys);
+              if (!fn) return `{${nested}}`;
+              try {
+                return String(fn(...values));
+              } catch {
+                return `{${nested}}`;
+              }
+            }
+          );
+          return `\`${nestedEvaluated}\``;
+        }
+      );
+
+      const fn = compileExpression(evaluatedExpr, keys);
+      if (!fn) return `{${rawExpr}}`;
+      try {
+        return String(fn(...values));
+      } catch {
+        return `{${rawExpr}}`;
+      }
+    });
+
+    loops++;
+  }
+
+  return current;
 }

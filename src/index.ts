@@ -1,2 +1,2 @@
-export { parseTemplate, parseTemplateObject } from './utils';
-export { Context } from './types';
+export * from './utils';
+export * from './types';

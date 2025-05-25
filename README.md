@@ -25,34 +25,24 @@ npm install @loybung/dous
 ## 🚀 Usage
 
 ```js
-import { parseTemplate, parseTemplateObject } from '@loybung/dous';
+const { parseTemplate, parseTemplateObject } = require('../dist/index');
 
 const data = {
+  name: 'John',
   age: 15,
-  sum: (a: number, b: number) => a + b,
-  date: Date.now(),
+  say: text => text.toUpperCase(),
 };
 
-const template = {
-  one: '{{age}} {{sum(age, 5)}}',
-  two: '{{date}} {{unknown}}',
+const str = '{age} {name}';
+const obj = {
+  one: '{age} {say(`hello`)}',
+  two: '{date} {Date.now()}',
 };
 
-// Parse object
-const result = parseTemplateObject(template, data);
-
-console.log(result);
-// {
-//   one: '15 20',
-//   two: '1716460000000 {{unknown}}'
-// }
-```
-
-You can also parse individual strings:
-
-```ts
-const str = '{{sum(age, 5)}}';
-const parsed = parseTemplate(str, data); // → '20'
+console.log(parseTemplate(str, data));
+console.log(parseTemplateObject(obj, data));
+// 15 John
+// { one: '15 HELLO', two: '1748176273438 {Date.now()}' }
 ```
 
 ---
@@ -65,7 +55,7 @@ For example:
 
 ```ts
 const template = '{{Date.now()}}';
-const result = parseTemplate(template, data); 
+const result = parseTemplate(template, data);
 // → '{{Date.now()}}'  (blocked)
 ```
 
