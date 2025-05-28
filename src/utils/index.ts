@@ -1,2 +1,2 @@
-export * from './parseTemplate';
-export * from './parseTemplateObject';
+export * from "./parseTemplate";
+export * from "./parseTemplateObject";
