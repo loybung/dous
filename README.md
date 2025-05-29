@@ -25,7 +25,7 @@ npm install @loybung/dous
 ## 🚀 Usage
 
 ```js
-const { parseTemplate, parseTemplateObject } = require('../dist/index');
+const { parseTemplate, parseTemplateObject } = require('@loybung/dous');
 
 const data = {
   name: 'John',

@@ -1,6 +1,6 @@
 {
 	"name": "@loybung/dous",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "A lightweight, fast, and secure template engine for safely parsing {{expression}} from strings or objects using a provided context. Designed for high-performance",
 	"repository": {
 		"type": "git",
